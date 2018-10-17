@@ -13,7 +13,7 @@
 <body>
 <nav id="navbar">
 	<a class="active" href="index.php">Hem</a>
-	<a href="play.php">Spela</a>
+	<a href="play.php?page=7">Spela</a>
 	<a href="edit.php">Redigera</a>
 </nav>	
 <main class="content">

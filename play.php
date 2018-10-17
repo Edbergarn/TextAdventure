@@ -13,7 +13,7 @@
 <body>
 <nav id="navbar">
 	<a href="index.php">Hem</a>
-	<a class="active" href="play.php">Spela</a>
+	<a class="active" href="play.php?page=7">Spela</a>
 	<a href="edit.php">Redigera</a>
 </nav>	
 <main class="content">
@@ -44,9 +44,9 @@
 
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-		echo "<pre>" . print_r($row,1) . "</pre>";
+		//echo "<pre>" . print_r($row,1) . "</pre>";
 
-		// echo "<p>" . $row['text'] . "</p>";
+		echo "<p id=\"storyText\">" . $row['text'] . "</p>";
 
 		$stmt = $dbh->prepare("SELECT * FROM storylinks WHERE storyid = :id");
 		$stmt->bindParam(':id', $filteredPage);
@@ -55,7 +55,7 @@
 		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);		
 
 		foreach ($row as $val) {
-			echo "<a href=\"?page=" . $val['target'] . "\">" . $val['text'] . "</a>";
+			echo "<a class=\"link\" href=\"?page=" . $val['target'] . "\">" . $val['text'] . "</a>";
 		}
 
 	} elseif(isset($_SESSION['page'])) {
