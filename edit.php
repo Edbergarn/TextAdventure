@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	include_once 'include/dbinfo.php';
 ?>
 <!doctype html>
 <html lang="se">
@@ -19,67 +20,67 @@
 <main class="content">
 	<section>
 		<h1>Redigera</h1>
-		<form id="update" action="update.php" method="POST">
-		<fieldset>
-			<legend>Uppdatera</legend>
-			<p>
-				<label for="username">Användarnamn:</label>
-				<input type="text" name="username" id="username">
-			</p>
-			<p>
-				<label for="password">Lösenord:</label>
-				<input type="password" name="password" id="password">
-			</p>
-			<p>
-				<input type="submit" name="submit" id="submit" value="Logga in">
-			</p>
-		</fieldset>
-	</form>
-	<form id="create" action="create.php" method="POST">
-		<fieldset>
-			<legend>Skapa Användare</legend>
-			<p>
-				<label for="newUser" >Användarnamn:</label>
-				<input type="text" name="username" id="username">
-			</p>
-			<p>
-				<label for="newPass">Lösenord:</label>
-				<input type="password" name="password" id="password">
-			</p>
-			<p>
-				<label for="checkPass">Bekräfta lösenord:</label>
-				<input type="password" name="checkPassword" id="checkPassword">
-			</p>
-			<p>
-				<label for="newEmail">Email:</label>
-				<input type="text" name="email" id="email">
-			</p>
-			<p>
-				<input type="submit" name="create" id="create" value="Skapa">
-			</p>
+			<table>
+			<tr>
+				<th>ID</th>
+				<th>Text</th>
+				<th>Place</th>
+				<th></th>
+			</tr>
 
-		</fieldset>
-	</form>
-	<form id="delete" action="" method="POST">
-		<fieldset>
-			<legend>Ta bort min användare tack</legend>
-			<p>
-				<label for="password">Lösenord:</label>
-				<input type="password" name="password" id="password">
-			</p>
-			<p>
-				<input type="submit" name="delete" id="delete" value="Ta bort">
-			</p>
-		</fieldset>
-	</form>
+
+	<section>
 	<?php
 // TODO protect with your login
 // add, edit, delete pages & events
 // skriv ut en lista över sidor
+		$stmt = $dbh->prepare("SELECT * FROM story");
+		$stmt->execute();
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
+		
+
+		foreach ($row as $value) {
+			echo "<tr>";
+			echo "<td>" . $value['id'] . "</td>";
+			echo "<td>" . substr($value['text'], 0,40) . "... </td>";
+			echo "<td>" . $value['place'] . "</td>"; 
+			echo "</tr>";
+		}
+
+		
+		if (isset($_POST['create'])) {
+			$filteredText = filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);	
+			$filteredPlace = filter_input(INPUT_POST, "place", FILTER_SANITIZE_SPECIAL_CHARS);
+
+			$stmt = $dbh->prepare("INSERT INTO story (text, place) VALUES (:text, :place");
+			$stmt->bindParam(':text', $filteredText);
+			$stmt->bindParam(':place', $filteredPlace);
+			$stmt->execute();
+			//header('location:edit.php');
+		}
+	
 
 
 
 ?>
+</section>
+<section class="forms">
+</table>
+		<form id="create" action="" method="POST">
+		<p>
+			<label>Story</label><br>
+			<textarea name="text"  rows="5" cols="40">
+			</textarea>
+		</p>
+		<p>	
+			<label>Place</label><br>
+			<input type="text" name="place">
+		</p>
+		<p>
+			<input type="submit" name="create" id="create" value="Skapa">
+		</p>
+		</form>
+</section>
 </main>
 <script src="js/navbar.js"></script>
 </body>
