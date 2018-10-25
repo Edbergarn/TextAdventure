@@ -32,7 +32,7 @@
 	include_once 'include/dbinfo.php';
 
 	// PDO
-	$dbh = new PDO('mysql:host=localhost;dbname=te16;charset=utf8mb4', $dbuser, $dbpass);
+	$dbh = new PDO('mysql:host=localhost;dbname=te16;charset=utf8mb4', $dbuser, $dbpassword);
 
 	if (isset($_GET['page'])) {
 		// TODO load requested page from DB using GET
@@ -52,11 +52,14 @@
 		$stmt->bindParam(':id', $filteredPage);
 		$stmt->execute();
 
-		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);		
+		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);	
 
+		echo "<section class=\"alternativ\">";
 		foreach ($row as $val) {
 			echo "<a class=\"link\" href=\"?page=" . $val['target'] . "\">" . $val['text'] . "</a>";
 		}
+
+		echo "</section>";
 
 	} elseif(isset($_SESSION['page'])) {
 		// TODO load page from db
@@ -66,6 +69,7 @@
 	}
 
 ?>
+</section>
 </main>
 <script src="js/navbar.js"></script>
 </body>

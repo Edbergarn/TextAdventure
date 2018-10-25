@@ -1,6 +1,7 @@
 <?php
 	session_start();
 	include_once 'include/dbinfo.php';
+	$dbh = new PDO("mysql:host=$servername;dbname=$dbname; charset=utf8mb4", $dbuser, $dbpassword);
 ?>
 <!doctype html>
 <html lang="se">
@@ -10,6 +11,7 @@
 	<title>Soloäventyr - Redigera</title>
 	<link href="https://fonts.googleapis.com/css?family=Merriweather|Merriweather+Sans" rel="stylesheet"> 
 	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 <body>
 <nav id="navbar">
@@ -27,61 +29,69 @@
 				<th>Place</th>
 				<th></th>
 			</tr>
-
-
-	<section>
-	<?php
+<?php
 // TODO protect with your login
 // add, edit, delete pages & events
 // skriv ut en lista över sidor
-		$stmt = $dbh->prepare("SELECT * FROM story");
-		$stmt->execute();
-		$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
-		
+	$stmt = $dbh->prepare("SELECT * FROM story");
+	$stmt->execute();
+	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-		foreach ($row as $value) {
-			echo "<tr>";
-			echo "<td>" . $value['id'] . "</td>";
-			echo "<td>" . substr($value['text'], 0,40) . "... </td>";
-			echo "<td>" . $value['place'] . "</td>"; 
-			echo "</tr>";
-		}
+	if(isset($_GET['delete'])) {
+		$filteredId = filter_input(INPUT_GET, "delete", FILTER_VALIDATE_INT);
+		$stmt = $dbh->prepare("DELETE FROM story WHERE id = :id");
+		$stmt->bindParam(':id', $filteredId);
+		$stmt->execute(); //Kör "Delete"
+		echo "deleted id: " . $filteredId;
+		header('location:edit.php'); // //Löste mitt problem ang delay på att saker händer
+	}
 
-		
-		if (isset($_POST['create'])) {
-			$filteredText = filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);	
-			$filteredPlace = filter_input(INPUT_POST, "place", FILTER_SANITIZE_SPECIAL_CHARS);
 
-			$stmt = $dbh->prepare("INSERT INTO story (text, place) VALUES (:text, :place");
-			$stmt->bindParam(':text', $filteredText);
-			$stmt->bindParam(':place', $filteredPlace);
-			$stmt->execute();
-			//header('location:edit.php');
-		}
+	foreach ($row as $value) {
+		echo "<tr>";
+		echo "<td>" . $value['id'] . "</td>";
+		echo "<td>" . substr($value['text'], 0, 40) . "...</td>"; // substr pajjar teckenkodning?
+		echo "<td>" . $value['place'] . "</td>";
+		echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons m-center\">edit</i></a>";
+		echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons m-center\">delete_forever</i></a></td>";
+		echo "</tr>";
+	}
+
 	
+	if (isset($_POST['insert'])) {
+		$filteredText = filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);	
+		$filteredPlace = filter_input(INPUT_POST, "place", FILTER_SANITIZE_SPECIAL_CHARS);
 
+		$stmt = $dbh->prepare("INSERT INTO story (text, place) VALUES (:text, :place)");
+		$stmt->bindParam(':text', $filteredText);
+		$stmt->bindParam(':place', $filteredPlace);
+		$stmt->execute(); //Kör "add"
+		header('location:edit.php'); //Löste mitt problem ang delay på att saker händer
 
-
+	}
 ?>
-</section>
+
+		</table>
+	</section>
+
 <section class="forms">
-</table>
-		<form id="create" action="" method="POST">
+		<form id="create" action="edit.php" method="POST">
 		<p>
 			<label>Story</label><br>
-			<textarea name="text"  rows="5" cols="40">
+			<textarea name="text" id="textarea" >
 			</textarea>
 		</p>
 		<p>	
 			<label>Place</label><br>
-			<input type="text" name="place">
+			<input type="text" name="place" id="place" >
 		</p>
 		<p>
-			<input type="submit" name="create" id="create" value="Skapa">
+			<input type="submit" name="insert" id="insert">
 		</p>
 		</form>
 </section>
 </main>
-<script src="js/navbar.js"></script>
+<script src="js/navbar.js">
+</script>
 </body>
 </html>

@@ -18,8 +18,8 @@
 </nav>	
 <main class="content">
 	<section>
-		<h1>Soloäventyr - La Traviata</h1>
-		<p>Välkommen till sidan om...</p>
+		<h1>Jörgens Kärleksäventyr</h1>
+		<p>Här kan man ju skriva vad skiten handlar om, inget jag prioriterar.</p>
 <?php
 
 
