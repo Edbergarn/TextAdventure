@@ -33,9 +33,6 @@
 // TODO protect with your login
 // add, edit, delete pages & events
 // skriv ut en lista över sidor
-	$stmt = $dbh->prepare("SELECT * FROM story");
-	$stmt->execute();
-	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 	if(isset($_GET['delete'])) {
 		$filteredId = filter_input(INPUT_GET, "delete", FILTER_VALIDATE_INT);
@@ -46,6 +43,9 @@
 		header('location:edit.php'); // //Löste mitt problem ang delay på att saker händer
 	}
 
+	$stmt = $dbh->prepare("SELECT * FROM story");
+	$stmt->execute();
+	$row = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 	foreach ($row as $value) {
 		echo "<tr>";
@@ -58,6 +58,39 @@
 	}
 
 	
+?>
+
+		</table>
+	</section>
+	<section class="forms">
+<?php
+	echo "<form action=\"edit.php\" method=\"post\">";
+	echo "<label for=\"text\">Story</label>";
+	echo "<textarea name=\"text\" id=\"textarea\" rows=\"5\" cols=\"50\">";
+	if(isset($_GET['edit'])) {
+		$filteredId = filter_input(INPUT_GET, "edit", FILTER_VALIDATE_INT);
+		$stmt = $dbh->prepare("SELECT * FROM story WHERE id = :id");
+		$stmt->bindParam(':id', $filteredId);
+		$stmt->execute();
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
+		echo $row['text'];
+
+	}
+	echo "</textarea>";
+	echo "<label for=\"place\">Place</label>";
+	if(isset($_GET['edit'])) {
+		echo "<input type=\"text\" name=\"place\" id=\"place\" value=\"" . $row['place'] . "\">";	
+		echo "<input type=\"hidden\" name=\"id\" id=\"id\" value=\"" . $row['id'] . "\">";	
+		echo "<input type=\"submit\" name=\"update\" id=\"insert\" value=\"Uppdatera\">";		
+	}
+	else {
+		echo "<input type=\"text\" name=\"place\" id=\"place\">";
+		echo "<input type=\"submit\" name=\"insert\" id=\"insert\" value=\"Lägg till\">";
+	}
+
+	echo "</form>";
+	echo "</section>";
+
 	if (isset($_POST['insert'])) {
 		$filteredText = filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);	
 		$filteredPlace = filter_input(INPUT_POST, "place", FILTER_SANITIZE_SPECIAL_CHARS);
@@ -66,15 +99,22 @@
 		$stmt->bindParam(':text', $filteredText);
 		$stmt->bindParam(':place', $filteredPlace);
 		$stmt->execute(); //Kör "add"
-		header('location:edit.php'); //Löste mitt problem ang delay på att saker händer
 
+		header('location: edit.php'); //Löste mitt problem ang delay på att saker händer
+
+	}	elseif(isset($_POST['update'])) {
+			$filteredText= filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);
+			$filteredPlace = filter_input(INPUT_POST, "place", FILTER_SANITIZE_SPECIAL_CHARS);
+			$filteredId = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+			$stmt = $dbh->prepare("UPDATE story SET text = :text, place = :place WHERE id = :id");
+			$stmt->bindParam(':text', $filteredText);
+			$stmt->bindParam(':place', $filteredPlace);
+			$stmt->bindParam(':id', $filteredId);
+			$stmt->execute();
+			header('location:edit.php');
 	}
 ?>
-
-		</table>
-	</section>
-
-<section class="forms">
+	 <!--<section class="forms">
 		<form id="create" action="edit.php" method="POST">
 		<p>
 			<label>Story</label><br>
@@ -89,7 +129,7 @@
 			<input type="submit" name="insert" id="insert">
 		</p>
 		</form>
-</section>
+</section>-->
 </main>
 <script src="js/navbar.js">
 </script>
