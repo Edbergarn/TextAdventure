@@ -41,6 +41,7 @@
 		$stmt->execute(); //Kör "Delete"
 		echo "deleted id: " . $filteredId;
 		header('location:edit.php'); // //Löste mitt problem ang delay på att saker händer
+		die();
 	}
 
 	$stmt = $dbh->prepare("SELECT * FROM story");
@@ -52,8 +53,10 @@
 		echo "<td>" . $value['id'] . "</td>";
 		echo "<td>" . substr($value['text'], 0, 40) . "...</td>"; // substr pajjar teckenkodning?
 		echo "<td>" . $value['place'] . "</td>";
-		echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons m-center\">edit</i></a>";
-		echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons m-center\">delete_forever</i></a></td>";
+	//	echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons m-center\">edit</i></a>";
+	//	echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons m-center\">delete_forever</i></a></td>";
+		echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons\">edit</i></a>";
+		echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons\">delete_forever</i></a></td>";
 		echo "</tr>";
 	}
 
@@ -100,7 +103,8 @@
 		$stmt->bindParam(':place', $filteredPlace);
 		$stmt->execute(); //Kör "add"
 
-		header('location: edit.php'); //Löste mitt problem ang delay på att saker händer
+		header('location: edit.php'); //Löste mitt problem ang delay på att saker 
+		die();
 
 	}	elseif(isset($_POST['update'])) {
 			$filteredText= filter_input(INPUT_POST, "text", FILTER_SANITIZE_SPECIAL_CHARS);
@@ -112,6 +116,7 @@
 			$stmt->bindParam(':id', $filteredId);
 			$stmt->execute();
 			header('location:edit.php');
+			die();
 	}
 ?>
 	 <!--<section class="forms">
