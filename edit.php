@@ -53,8 +53,6 @@
 		echo "<td>" . $value['id'] . "</td>";
 		echo "<td>" . substr($value['text'], 0, 40) . "...</td>"; // substr pajjar teckenkodning?
 		echo "<td>" . $value['place'] . "</td>";
-	//	echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons m-center\">edit</i></a>";
-	//	echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons m-center\">delete_forever</i></a></td>";
 		echo "<td><a href=\"edit.php?edit=" . $value['id'] . "\"><i class=\"material-icons\">edit</i></a>";
 		echo "<a href=\"edit.php?delete=" . $value['id'] . "\"><i class=\"material-icons\">delete_forever</i></a></td>";
 		echo "</tr>";
